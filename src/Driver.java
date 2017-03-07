@@ -1,5 +1,7 @@
+import java.util.Random;
 
 public class Driver{
+	
 
 	public static void main(String[] args) {
 
@@ -7,16 +9,27 @@ public class Driver{
 		SavingsAccount s = new SavingsAccount(0, "Savings Account"); //Creates a new Savings Account with �1000 funds
 		CheckingAccount c = new CheckingAccount(1500, "Checking Account"); //Creates a new Checking Account with �1000 funds
 		CODAccount cod = new CODAccount(3000, "COD Account"); //Creates a new Checking Account with �1000 funds
+		Random rnd=new Random();
+		Random type=new Random();
 
-		Thread t15 = new Thread(){
-			public  void run(){
-				s.withdrawFunds(5000);
-			}
-		};
-
+		for (int k=0;k<4;k++) {
+			Thread t15 = new Thread(){
+				public  void run(){
+					for (int i=0;i<5;i++) {
+						int j = type.nextInt(2);
+						if (j == 0) 
+							s.withdrawFunds(rnd.nextInt(5000));
+						else
+							s.depositFunds(rnd.nextInt(9999));
+					}
+				}
+			}; 
+			t15.start();
+		}
+		/*
 		Thread t16 = new Thread(){
 			public  void run(){
-				s.withdrawFunds(3000);
+				s.withdrawFunds(rnd.nextInt(5000));
 			}
 		};
 
@@ -25,7 +38,7 @@ public class Driver{
 				s.depositFunds(9999);
 			}
 		};
-
+*/
 //		Thread t1 = new Thread(){
 //			public  void run(){
 //				s.transferAmount(2000, s, c);
@@ -141,8 +154,7 @@ public class Driver{
 //		t8.start();
 //		t9.start();
 //		t10.start();
-		t15.start();
-		t16.start();
-		t17.start();
+//		t16.start();
+//		t17.start();
 	}
 }
