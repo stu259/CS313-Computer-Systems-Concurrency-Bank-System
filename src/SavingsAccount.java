@@ -23,11 +23,11 @@ class SavingsAccount extends Account{
 	//Transfers funds between 2 accounts
 	//Takes an amount and 2 accounts as parameters
     void transferAmount(double a1, Account a, Account b){
-        System.out.println("Calling Transfer Amount");
+        System.out.println("Calling Transfer");
         lock.lock();
         try {
             if(a1 > a.funds){
-                System.out.println("waiting");
+//                System.out.println("waiting");
                 try {
                     notEoungh.await(2, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
@@ -37,13 +37,13 @@ class SavingsAccount extends Account{
             }
 
             if(a1 > a.funds){
-                System.out.printf("Thread with ID %d, %s Insufficient funds cannot transfer\n", Thread.currentThread().getId(), getName());
+//                System.out.printf("Thread with ID %d, %s Insufficient funds cannot transfer\n", Thread.currentThread().getId(), getName());
             } else {
-                System.out.printf("Thread with ID %d, Transferring: %.2f from %s to %s\n", Thread.currentThread().getId(), a1, a.getName(), b.getName());
+//                System.out.printf("Thread with ID %d, Transferring: %.2f from %s to %s\n", Thread.currentThread().getId(), a1, a.getName(), b.getName());
                 a.funds = a.funds - a1;
                 b.funds = b.funds + a1;
-                System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), a.getName(), a.getBalance());
-                System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), b.getName(), b.getBalance());
+//                System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), a.getName(), a.getBalance());
+//                System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), b.getName(), b.getBalance());
             }
         } finally {
             lock.unlock();
@@ -53,12 +53,12 @@ class SavingsAccount extends Account{
 	//Deposits funds into an account
     //Takes an amount as a parameter
 	void depositFunds(double amount){
-        System.out.println("---Calling Deposit---");
+        System.out.println("Calling Deposit");
 		lock.lock();
 		try {
-			System.out.printf("Thread with ID %d, depositing: %.2f into %s\n", Thread.currentThread().getId(), amount, getName());
+//			System.out.printf("Thread with ID %d, depositing: %.2f into %s\n", Thread.currentThread().getId(), amount, getName());
 			funds += amount;
-			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
+//			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
 			notEoungh.signalAll();
 		} finally {
 			lock.unlock();
@@ -69,12 +69,12 @@ class SavingsAccount extends Account{
 	//Withdraws funds from an account
     //Takes an amount as a parameter
 	void withdrawFunds(double amount) {
-        System.out.println("---Calling Withdraw---");
+        System.out.println("Calling Withdraw");
 		lock.lock();
 		try{
-			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
+//			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
 			if(amount > funds){
-				System.out.println("waiting");
+//				System.out.println("waiting");
 				try {
 					notEoungh.await(2, TimeUnit.SECONDS);
 				} catch (InterruptedException e) {
@@ -83,17 +83,17 @@ class SavingsAccount extends Account{
 			}
 
 			if(amount > funds){
-				System.out.printf("Thread with ID %d, %s Insufficient funds cannot withdraw\n", Thread.currentThread().getId(), getName());
+//				System.out.printf("Thread with ID %d, %s Insufficient funds cannot withdraw\n", Thread.currentThread().getId(), getName());
 			} else {
 				funds -= amount;
 				lowerLimit();
 				if (lowerLimitReached) {
 					calculatePenalty();
-					System.out.printf("Lower Limit Reached, withdrawing penalty of " + penaltyCharge);
+//					System.out.printf("Lower Limit Reached, withdrawing penalty of " + penaltyCharge);
 					funds -= penaltyCharge;
-					System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
+//					System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
 				} else {
-					System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
+//					System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
 				}
 			}
 		} finally {
