@@ -12,13 +12,15 @@ public class TestGenerator {
 	
 	List<String> pairs;
 	List<String> generatedStrings;
+	List<String> generatedID;
 
     public TestGenerator(int limit){
     	pairs = new ArrayList<String>();
     	generatedStrings = new ArrayList<String>();
+    	generatedID = new ArrayList<String>();
     	generatePairs();
-        SavingsAccount s = new SavingsAccount(0, "Savings Account"); //Creates a new Savings Account with "a" funds
-        SavingsAccount s2 = new SavingsAccount(0, "Savings Account 2"); //Creates a new Savings Account with "a" funds
+        SavingsAccount s = new SavingsAccount(99999999, "Savings Account"); //Creates a new Savings Account with "a" funds
+        SavingsAccount s2 = new SavingsAccount(99999999, "Savings Account 2"); //Creates a new Savings Account with "a" funds
         for(int i = 0;i<limit;i++){
         	createThread(s, s2);
         }
@@ -42,23 +44,27 @@ public class TestGenerator {
                     for (int i=0;i<1;i++) {
                         int j = type.nextInt(4);
                         int x = rnd.nextInt(9999);
-                        System.out.println("---Test #" + (i+1) + "---");
+//                        System.out.println("---Test #" + (i+1) + "---");
                         if (j == 0) {
                             withdrawTest(s, x);
-                            System.out.println("---Test #" + (i + 1) + " Complete---");
+                            generatedID.add(Long.toString(getID(s)));
+//                            System.out.println("---Test #" + (i + 1) + " Complete---");
                             generatedStrings.add("withdraw");
                         }else if(j == 1) {
                             depositTest(s, x);
-                            System.out.println("---Test #" + (i + 1) + " Complete---");
+                            generatedID.add(Long.toString(getID(s)));
+//                            System.out.println("---Test #" + (i + 1) + " Complete---");
                             generatedStrings.add("deposit");
                         }else if(j == 2) {
                             transferTest(s, s2, x);
-                            System.out.println("---Test #" + (i + 1) + " Complete---");
+                            generatedID.add(Long.toString(getID(s)));
+//                            System.out.println("---Test #" + (i + 1) + " Complete---");
                             generatedStrings.add("transfer");
                         }
                         else if(j == 3){
                         	getBalance(s);
-                        	System.out.println("---Test #" + (i + 1) + " Complete---");
+                        	generatedID.add(Long.toString(getID(s)));
+//                        	System.out.println("---Test #" + (i + 1) + " Complete---");
                         	generatedStrings.add("get");
                         }
                     }
@@ -83,6 +89,12 @@ public class TestGenerator {
     
     public void getBalance(SavingsAccount s){
     	s.getBalance();
+    }
+    
+    public long getID(SavingsAccount s){
+    	long l = s.getID();
+    	System.out.println(l);
+    	return l;
     }
     
     private void generatePairs(){
@@ -116,6 +128,7 @@ public class TestGenerator {
     		if(copyPairs.contains(compare)){
     			pairsFound++;
     			copyPairs.remove(compare);
+    			System.out.println(compare);
     		}
     	}
     	

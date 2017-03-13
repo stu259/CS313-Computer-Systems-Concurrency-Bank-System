@@ -7,7 +7,7 @@ class SavingsAccount extends Account{
 
 	private boolean lowerLimitReached; //Boolean value stating whether or not the Lower Limit has been reached
 	private double penaltyCharge; //The value of the penalty charge to be applied
-	private Lock lock;
+	private ReentrantLock lock;
 	private final Condition notEoungh;
 
 
@@ -25,6 +25,9 @@ class SavingsAccount extends Account{
     void transferAmount(double a1, Account a, Account b){
         System.out.println("Calling Transfer");
         lock.lock();
+        if(lock.isHeldByCurrentThread()){
+			currentId = Thread.currentThread().getId();
+		}
         try {
             if(a1 > a.funds){
 //                System.out.println("waiting");
@@ -55,6 +58,9 @@ class SavingsAccount extends Account{
 	void depositFunds(double amount){
         System.out.println("Calling Deposit");
 		lock.lock();
+		if(lock.isHeldByCurrentThread()){
+			currentId = Thread.currentThread().getId();
+		}
 		try {
 //			System.out.printf("Thread with ID %d, depositing: %.2f into %s\n", Thread.currentThread().getId(), amount, getName());
 			funds += amount;
@@ -71,6 +77,9 @@ class SavingsAccount extends Account{
 	void withdrawFunds(double amount) {
         System.out.println("Calling Withdraw");
 		lock.lock();
+		if(lock.isHeldByCurrentThread()){
+			currentId = Thread.currentThread().getId();
+		}
 		try{
 //			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
 			if(amount > funds){
@@ -86,9 +95,9 @@ class SavingsAccount extends Account{
 //				System.out.printf("Thread with ID %d, %s Insufficient funds cannot withdraw\n", Thread.currentThread().getId(), getName());
 			} else {
 				funds -= amount;
-				lowerLimit();
+				//lowerLimit();
 				if (lowerLimitReached) {
-					calculatePenalty();
+					//calculatePenalty();
 //					System.out.printf("Lower Limit Reached, withdrawing penalty of " + penaltyCharge);
 					funds -= penaltyCharge;
 //					System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);

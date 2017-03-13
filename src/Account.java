@@ -4,15 +4,24 @@ import java.util.concurrent.locks.ReentrantLock;
 class Account {
 	double funds;						//Funds of an account object
 	String accountName;					//Name of an account object
-	Lock lock;
+	ReentrantLock lock;
+	long currentId;
 	
 	Account(double initialFunds){
 		funds = initialFunds;
 		lock = new ReentrantLock();
+		currentId = 0;
+	}
+	
+	public long getID(){
+		return currentId;
 	}
 
 	double getBalance(){
 		lock.lock();
+		if(lock.isHeldByCurrentThread()){
+			currentId = Thread.currentThread().getId();
+		}
 		try {
 			return funds;
 		} finally {
