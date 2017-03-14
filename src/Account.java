@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -5,22 +7,22 @@ class Account {
 	double funds;						//Funds of an account object
 	String accountName;					//Name of an account object
 	ReentrantLock lock;
-	long currentId;
+	List<Integer> currentId;
 	
 	Account(double initialFunds){
 		funds = initialFunds;
 		lock = new ReentrantLock();
-		currentId = 0;
+		currentId = new ArrayList<Integer>();
 	}
 	
-	public long getID(){
+	public List<Integer> getID(){
 		return currentId;
 	}
 
 	double getBalance(){
 		lock.lock();
 		if(lock.isHeldByCurrentThread()){
-			currentId = Thread.currentThread().getId();
+			currentId.add((int)Thread.currentThread().getId());
 		}
 		try {
 			return funds;

@@ -23,16 +23,16 @@ class SavingsAccount extends Account{
 	//Transfers funds between 2 accounts
 	//Takes an amount and 2 accounts as parameters
     void transferAmount(double a1, Account a, Account b){
-        System.out.println("Calling Transfer");
+//        System.out.println("Calling Transfer");
         lock.lock();
         if(lock.isHeldByCurrentThread()){
-			currentId = Thread.currentThread().getId();
+			currentId.add((int)Thread.currentThread().getId());
 		}
         try {
             if(a1 > a.funds){
 //                System.out.println("waiting");
                 try {
-                    notEoungh.await(2, TimeUnit.SECONDS);
+                    notEoungh.await(500, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -56,10 +56,10 @@ class SavingsAccount extends Account{
 	//Deposits funds into an account
     //Takes an amount as a parameter
 	void depositFunds(double amount){
-        System.out.println("Calling Deposit");
+//        System.out.println("Calling Deposit");
 		lock.lock();
 		if(lock.isHeldByCurrentThread()){
-			currentId = Thread.currentThread().getId();
+			currentId.add((int)Thread.currentThread().getId());
 		}
 		try {
 //			System.out.printf("Thread with ID %d, depositing: %.2f into %s\n", Thread.currentThread().getId(), amount, getName());
@@ -75,10 +75,10 @@ class SavingsAccount extends Account{
 	//Withdraws funds from an account
     //Takes an amount as a parameter
 	void withdrawFunds(double amount) {
-        System.out.println("Calling Withdraw");
+//        System.out.println("Calling Withdraw");
 		lock.lock();
 		if(lock.isHeldByCurrentThread()){
-			currentId = Thread.currentThread().getId();
+			currentId.add((int)Thread.currentThread().getId());
 		}
 		try{
 //			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
