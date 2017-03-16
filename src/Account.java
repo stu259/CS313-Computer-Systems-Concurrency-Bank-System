@@ -8,6 +8,7 @@ class Account {
 	String accountName;					//Name of an account object
 	ReentrantLock lock;
 	List<Integer> currentId;
+	List<Boolean> holdingLock;
 	
 	Account(double initialFunds){
 		funds = initialFunds;
@@ -18,12 +19,25 @@ class Account {
 	public List<Integer> getID(){
 		return currentId;
 	}
+	
+	public void clearIDs(){
+		currentId.clear();
+	}
+	
+	public List<Boolean> getLocksBool(){
+		return holdingLock;
+	}
+	
+	public void clearLocks(){
+		holdingLock.clear();
+	}
 
 	double getBalance(){
 		lock.lock();
 		if(lock.isHeldByCurrentThread()){
 			currentId.add((int)Thread.currentThread().getId());
 		}
+//		holdingLock.add(Thread.currentThread().holdsLock(lock));
 		try {
 			return funds;
 		} finally {

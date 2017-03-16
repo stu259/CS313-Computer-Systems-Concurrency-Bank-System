@@ -28,6 +28,7 @@ class SavingsAccount extends Account{
         if(lock.isHeldByCurrentThread()){
 			currentId.add((int)Thread.currentThread().getId());
 		}
+       // holdingLock.add(Thread.currentThread().holdsLock(lock));
         try {
             if(a1 > a.funds){
 //                System.out.println("waiting");
@@ -61,6 +62,7 @@ class SavingsAccount extends Account{
 		if(lock.isHeldByCurrentThread()){
 			currentId.add((int)Thread.currentThread().getId());
 		}
+		//holdingLock.add(Thread.currentThread().holdsLock(lock));
 		try {
 //			System.out.printf("Thread with ID %d, depositing: %.2f into %s\n", Thread.currentThread().getId(), amount, getName());
 			funds += amount;
@@ -80,6 +82,7 @@ class SavingsAccount extends Account{
 		if(lock.isHeldByCurrentThread()){
 			currentId.add((int)Thread.currentThread().getId());
 		}
+		//holdingLock.add(Thread.currentThread().holdsLock(lock));
 		try{
 //			System.out.printf("Thread with ID %d, %s current funds: %.2f\n", Thread.currentThread().getId(), getName(), funds);
 			if(amount > funds){
