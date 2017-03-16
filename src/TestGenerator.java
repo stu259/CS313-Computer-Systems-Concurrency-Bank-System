@@ -15,6 +15,9 @@ public class TestGenerator {
 	List<String> pairs;
 	List<String> generatedID;
 	Map<String,String> idToString;
+	Map<String,threadInfo> thread_Info;
+	SavingsAccount s;
+    SavingsAccount s2;
 	
 	List<Thread> threads;
 
@@ -24,14 +27,16 @@ public class TestGenerator {
     	generatedID = new ArrayList<String>();
     	idToString = new HashMap<String,String>();
     	threads = new ArrayList<Thread>();
+    	thread_Info = new HashMap<String,threadInfo>();
     
     	//generate tests
-        SavingsAccount s = new SavingsAccount(0, "Savings Account"); //Creates a new Savings Account with "a" funds
-        SavingsAccount s2 = new SavingsAccount(0, "Savings Account 2"); //Creates a new Savings Account with "a" funds
+        s = new SavingsAccount(0, "Savings Account"); //Creates a new Savings Account with "a" funds
+        s2 = new SavingsAccount(0, "Savings Account 2"); //Creates a new Savings Account with "a" funds
         for(int i = 0;i<limit;i++){
         	threads.clear();
         	createThreads(s, s2);
-        	startThreads();
+        	waitFor(2);
+        	startThreads(5);     
         	waitFor(1);
         }
         
@@ -49,25 +54,31 @@ public class TestGenerator {
         Random type=new Random();
         
         for (int k=0;k<2;k++) {
+        	int j = type.nextInt(4);
+            int x = rnd.nextInt(9999);
+            
             Thread t1 = new Thread(){
                 public  void run(){
                 	String threadID = (Long.toString(Thread.currentThread().getId()));
+                	System.out.println(threadID);
                     for (int i=0;i<1;i++) {
-                        int j = type.nextInt(4);
-                        int x = rnd.nextInt(9999);
                         if (j == 0) {
                             withdrawTest(s, x);
                             idToString.put(threadID, "withdraw");
+                            thread_Info.put(threadID, new threadInfo(j,x,"withdraw"));
                         }else if(j == 1) {
                             depositTest(s, x);
                             idToString.put(threadID, "deposit");
+                            thread_Info.put(threadID, new threadInfo(j,x,"deposit"));
                         }else if(j == 2) {
                             transferTest(s, s2, x);
                             idToString.put(threadID, "transfer");
+                            thread_Info.put(threadID, new threadInfo(j,x,"transfer"));
                         }
                         else if(j == 3){
                         	getBalance(s);                        	
-                        	idToString.put(threadID, "get");                       
+                        	idToString.put(threadID, "get");
+                        	thread_Info.put(threadID, new threadInfo(j,x,"get"));
                         }
 //                        System.out.println("ThreadID: " + threadID + "  Method: " + idToString.get(threadID));
                     }
@@ -75,6 +86,73 @@ public class TestGenerator {
             };
             threads.add(t1);
         }
+        threads.get(0).run();
+        threads.get(1).run();
+    }
+    
+    private void createThread(int x, int j, String method, SavingsAccount s, SavingsAccount s2){
+    	Thread t1 = new Thread(){
+            public  void run(){
+            	String threadID = (Long.toString(Thread.currentThread().getId()));
+                switch(method){
+                case "withdraw":
+                	withdrawTest(s, x);
+                    idToString.put(threadID, "withdraw");
+                    break;
+                case "deposit":
+                	depositTest(s, x);
+                    idToString.put(threadID, "deposit");
+                    break;
+                case "transfer":
+                	transferTest(s, s2, x);
+                    idToString.put(threadID, "transfer");
+                    break;
+                case "get":
+                	getBalance(s);                        	
+                	idToString.put(threadID, "get");
+                	break;
+                default:
+                	return;
+                }
+            };
+    	};
+    	t1.start();
+    }
+    
+    private class threadInfo{
+    	private int j;
+    	private int x;
+    	private String method;
+    	
+    	public threadInfo(int j, int x, String method){
+    		this.method = method;
+    		this.j = j;
+    		this.x = x;
+    	}
+
+		public int getJ() {
+			return j;
+		}
+
+		public void setJ(int j) {
+			this.j = j;
+		}
+
+		public int getX() {
+			return x;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public String getMethod() {
+			return method;
+		}
+
+		public void setMethod(String method) {
+			this.method = method;
+		}
     }
 
     public void depositTest(SavingsAccount s, Integer amount){
@@ -93,9 +171,24 @@ public class TestGenerator {
     	s.getBalance();
     }
     
-    private void startThreads(){
-    	for(int i = 0; i<threads.size();i++){
-    		threads.get(i).start();
+    private void startThreads(int numRuns){
+    	Thread a = threads.get(0);
+    	Thread b = threads.get(1);
+    	String aID =  String.valueOf((a.getId()));
+    	String bID =  String.valueOf((b.getId()));
+    	threadInfo aInfo = thread_Info.get(aID);
+		threadInfo bInfo = thread_Info.get(bID);
+		System.out.println("ID a: " + aInfo + "  ID b: " + bInfo);
+    	for(String key: thread_Info.keySet()){
+    		System.out.println(key);
+    		System.out.println(thread_Info.get(key));
+    	}
+    	getIDs(s);
+    	
+    	for(int i = 0; i<(numRuns - 1); i++){
+    		createThread(aInfo.getX(), aInfo.getJ(), aInfo.getMethod(), s, s2);
+    		createThread(bInfo.getX(), bInfo.getJ(), bInfo.getMethod(), s, s2);
+    		waitFor(1);
     	}
     }
     
@@ -111,6 +204,7 @@ public class TestGenerator {
     private void getIDs(SavingsAccount s){
     	List<Integer> id = s.getID();
     	for(int i=0; i<s.getID().size(); i++){
+    		System.out.println(id.get(i));
     		generatedID.add(String.valueOf(id.get(i)));
     	}
     }
